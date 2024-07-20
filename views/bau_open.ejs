@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAU Open Tickets</title>
+    <link rel="icon" href="/styles/metaZlogo.jpeg" type="image/x-icon">
+    <style>
+        /* Add the CSS styles from your existing code here */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .btn-home {
+            position: relative;
+            top: 1px;
+            right: 42px;
+            padding: 8px 16px; /* Adjusted padding */
+            background-color: #808bde;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-home:hover {
+            background-color: #1b1f1b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #e5e5e5;
+        }
+
+        .variance {
+            color: #ff6347;
+        }
+
+        .percentage-variation {
+            color: #4682b4;
+        }
+        /* Additional styles for integration */
+        .table__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table__header h1 {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="table__header">
+            <h1>BAU Open Tickets</h1>
+            <a href="http://localhost:8000/home" class="btn-home">Home</a>
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Issue Type</th>
+                    <th>Total Tickets</th>
+                    <th>Original Estimate</th>
+                    <th>Time Spent</th>
+                    <th>Variance</th>
+                    <th>% Variation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let groupedData = {}; %>
+                <% data.forEach((report) => { %>
+                    <% let key = report.client + "_" + report.issueType; %>
+                    <% if (!groupedData[key]) { %>
+                        <% groupedData[key] = { 
+                            client: report.client, 
+                            issueType: report.issueType, 
+                            totalOriginalEstimate: 0, 
+                            totalTimeSpent: 0,
+                            totalTickets: 0,
+                            totalVariance: 0,
+                            totalPercentageVariation: 0
+                        }; %>
+                    <% } %>
+                    <% // Check if originalEstimate and timeSpent are valid numeric values before summing %>
+                    <% if (!isNaN(parseFloat(report.originalEstimate)) && !isNaN(parseFloat(report.timeSpent))) { %>
+                        <% groupedData[key].totalOriginalEstimate += parseFloat(report.originalEstimate); %>
+                        <% groupedData[key].totalTimeSpent += parseFloat(report.timeSpent); %>
+                    <% } %>
+                    <% groupedData[key].totalTickets += 1; // Increment totalTickets %>
+                    <% const variance = parseFloat(report.originalEstimate) - parseFloat(report.timeSpent); %>
+                    <% groupedData[key].totalVariance += variance; %>
+                    <% const percentageVariation = (variance / parseFloat(report.originalEstimate)) * 100; %>
+                    <% groupedData[key].totalPercentageVariation += percentageVariation; %>
+                <% }); %>
+                <% Object.keys(groupedData).forEach((key) => { %>
+                    <% let data = groupedData[key]; %>
+                    <tr>
+                        <td><%= data.client.charAt(0).toUpperCase() + data.client.slice(1) %></td>
+                        <td><%= data.issueType %></td>
+                        <td><%= data.totalTickets %></td>
+                        <td><%= data.totalOriginalEstimate.toFixed(2) %></td>
+                        <td><%= data.totalTimeSpent.toFixed(2) %></td>
+                        <td><%= data.totalVariance.toFixed(2) %></td>
+                        <td><%= (data.totalPercentageVariation / data.totalTickets).toFixed(2) %>%</td>
+                    </tr>
+                <% }); %>
+                <!-- Row to calculate and display the sum -->
+<!-- Row to calculate and display the sum -->
+<!-- Row to calculate and display the sum -->
+<tr>
+    <td colspan="2"><strong>Total</strong></td>
+    <td><%= Object.values(groupedData).reduce((acc, cur) => acc + cur.totalTickets, 0) %></td>
+    <td><%= Object.values(groupedData).reduce((acc, cur) => acc + cur.totalOriginalEstimate, 0).toFixed(2) %></td>
+    <td><%= Object.values(groupedData).reduce((acc, cur) => acc + cur.totalTimeSpent, 0).toFixed(2) %></td>
+    <td><%= (Object.values(groupedData).reduce((acc, cur) => acc + (cur.totalOriginalEstimate - cur.totalTimeSpent), 0)).toFixed(2) %></td>
+    <td>
+        <% const totalPercentageVariation = Object.values(groupedData).reduce((acc, cur) => acc + cur.totalPercentageVariation, 0) / Object.values(groupedData).reduce((acc, cur) => acc + cur.totalTickets, 0); %>
+        <%= isFinite(totalPercentageVariation) ? totalPercentageVariation.toFixed(2) + '%' : 'NA' %>
+    </td>
+</tr>
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function animateHome() {
+            const btnHome = document.querySelector('.btn-home');
+            btnHome.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btnHome.style.transform = 'rotate(0deg)';
+            }, 50000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="icon" href="/styles/metaZlogo.jpeg" type="image/x-icon">
+
+    <title>Metaz Vymo tickets Management</title>
+    <link rel="stylesheet" href="/styles/data-view.css" />
+    <style>
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-icon {
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    font-size: 20px;
+    margin-top: 20px;
+    color: #3498db;
+    font-family: Arial, sans-serif;
+    letter-spacing: 2px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <svg class="loading-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Define your custom loading icon here -->
+        <circle cx="50" cy="50" r="40" stroke="#3498db" stroke-width="6" fill="none" />
+    </svg>
+    <div class="loading-text">Loading...</div>
+</div>
+
+
+
+    <!-- navbar -->
+    <nav class="navbar">
+        <div class="logo_item">
+            <i class="bx bx-menu" id="sidebarOpen"></i>
+            <img src="/styles/metaZlogo.jpeg" alt="">MetaZ Digital
+        </div>
+
+        <div class="search_bar">
+            <input type="text" placeholder="Search" />
+        </div>
+
+        <div class="navbar_content">
+            <i class="bi bi-grid"></i>
+            <i class='bx bx-sun' id="darkLight"></i>
+            <i class='bx bx-bell' ></i>
+            <img src="/styles/metaZ.png" alt="" class="profile" />
+        </div>
+    </nav>
+
+    <!-- sidebar -->
+    <nav class="sidebar">
+        <div class="menu_content">
+            <ul class="menu_items">
+                <div class="menu_title menu_dahsboard"></div>
+                <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
+                <!-- start -->
+                <li class="item">
+                    <div href="#" class="nav_link submenu_item">
+                        <span class="navlink_icon">
+                            <i class="bx bx-chart"></i>
+                        </span>
+                        <span class="navlink">Reports</span>
+                        <i class="bx bx-chevron-right arrow-left"></i>
+                    </div>
+
+                    <ul class="menu_items submenu">
+                        <a href="http://localhost:8000/bauOpen" class="nav_link sublink">BAU Open</a>
+                        <a href="http://localhost:8000/bauClose" class="nav_link sublink">BAU Close</a>
+                        <a href="http://localhost:8000/launchOpen" class="nav_link sublink">Launch Open</a>
+                        <a href="http://localhost:8000/launchClose" class="nav_link sublink">Launch Close</a>
+
+                    </ul>
+                    
+                </li>
+                <!-- end -->
+
+                <!-- duplicate this li tag if you want to add or remove  navlink with submenu -->
+                <!-- start -->
+                <li class="item">
+                    <div href="#" class="nav_link submenu_item">
+                        <span class="navlink_icon">
+                            <i class="bx bx-grid-alt"></i>
+                        </span>
+                        <span class="navlink">Overview</span>
+                        <i class="bx bx-chevron-right arrow-left"></i>
+                    </div>
+
+                    <ul class="menu_items submenu">
+                        <a href="http://localhost:8000/bauOpen/all" class="nav_link sublink">BAU Open</a>
+                        <a href="http://localhost:8000/bauClose/all" class="nav_link sublink">BAU Close</a>
+                        <a href="http://localhost:8000/launchOpen/all" class="nav_link sublink">Launch Open</a>
+                        <a href="http://localhost:8000/launchClose/all" class="nav_link sublink">Launch Close</a>
+
+                    </ul>
+                </li>
+                <!-- end -->
+            </ul>
+                <li class="item">
+                    <a href="/upload" class="nav_link">
+                        <span class="navlink_icon">
+                            <i class="bx bx-cloud-upload"></i>
+                        </span>
+                        <span class="navlink">Upload new</span>
+                    </a>
+                </li>
+            </ul>
+    
+
+            <!-- Sidebar Open / Close -->
+            <div class="bottom_content">
+                <div class="bottom expand_sidebar">
+                    <span> Expand</span>
+                    <i class='bx bx-log-in' ></i>
+                </div>
+                <div class="bottom collapse_sidebar">
+                    <span> Collapse</span>
+                    <i class='bx bx-log-out'></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- JavaScript -->
+    
+    <script src="/styles/script.js"></script>
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    const sublinks = document.querySelectorAll('.sublink');
+    const uploadLink = document.querySelector('.nav_link[href="/home"]');
+
+    if (uploadLink) {
+        uploadLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            showLoadingOverlay();
+            setTimeout(function() {
+                window.location.href = uploadLink.href;
+            }, 1000);
+        });
+    }
+
+    sublinks.forEach(function(sublink) {
+        sublink.addEventListener('click', function(event) {
+            event.preventDefault();
+            showLoadingOverlay();
+            setTimeout(function() {
+                window.location.href = sublink.href;
+            }, 1000);
+        });
+    });
+
+    function showLoadingOverlay() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay && loadingOverlay.style.display !== 'flex') {
+            loadingOverlay.style.display = 'flex';
+        }
+    }
+});
+
+
+
+    </script>
+</body>
+</html>

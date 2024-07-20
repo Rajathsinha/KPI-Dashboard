@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/styles/metaZlogo.jpeg" type="image/x-icon">
+
+    <title>BAU Closed Tickets</title>
+    <style>
+        /* Add the CSS styles from your existing code here */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .btn-home {
+    position: relative;
+    top: 1px;
+    right: 42px;
+    padding: 8px 16px; /* Adjusted padding */
+    background-color: #808bde;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+
+        .btn-home:hover {
+            background-color: #1b1f1b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #e5e5e5;
+        }
+
+        .variance {
+            color: #ff6347;
+        }
+
+        .percentage-variation {
+            color: #4682b4;
+        }
+        /* Additional styles for integration */
+        .table__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table__header h1 {
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="table__header">
+            <h1>BAU Closed Tickets</h1>
+            <a href="http://localhost:8000/home" class="btn-home">Home</a>
+
+            
+            
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Client</th>
+                    <th>Issue Type</th>
+                    <th>Original Estimate</th>
+                    <th>Time Spent</th>
+                    <th>Variance</th>
+                    <th>Percentage Variation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(record => { %>
+                    <tr>
+                        <td><%= record.key %></td>
+                        <td><%= record.client %></td>
+                        <td><%= record.issueType %></td>
+                        <td><%= record.originalEstimate %></td>
+                        <td><%= record.timeSpent %></td>
+                        <td class="variance"><%= (parseFloat(record.originalEstimate) - parseFloat(record.timeSpent)).toFixed(2) %></td>
+                        <% 
+                            // Calculate percentage variation
+                            const originalEstimate = parseFloat(record.originalEstimate);
+                            const timeSpent = parseFloat(record.timeSpent);
+                            const variance = originalEstimate - timeSpent;
+                            const percentageVariation = originalEstimate !== 0 ? ((variance / originalEstimate) * 100).toFixed(2) + "%" : "NA";
+                        %>
+                        <td class="percentage-variation"><%= originalEstimate !== 0 ? percentageVariation : "NA" %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function animateHome() {
+            const btnHome = document.querySelector('.btn-home');
+            btnHome.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btnHome.style.transform = 'rotate(0deg)';
+            }, 50000);
+        }
+    </script>
+</body>
+</html>
